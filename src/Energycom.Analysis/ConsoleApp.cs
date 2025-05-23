@@ -16,6 +16,9 @@ public class ConsoleApp(
             Console.WriteLine("\n=== ENERGY SUMMARY ===");
             await analysisService.PrintAllReadingsAsync(cancellationToken);
 
+            Console.WriteLine("\n=== DEVICE INVENTORY (All Devices) ===");
+            await analysisService.PrintAllDevicesAsync(cancellationToken);
+
             logger.LogInformation("Work completed successfully");
         }
         catch (Exception ex)

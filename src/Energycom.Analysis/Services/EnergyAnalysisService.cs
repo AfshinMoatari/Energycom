@@ -1,6 +1,7 @@
+using Energycom.Analysis.Models;
 using Energycom.Ingestion.Data;
-using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Energycom.Analysis.Services
 {
@@ -35,6 +36,18 @@ namespace Energycom.Analysis.Services
             Console.WriteLine("+-------------------+-------------------+-------------------+");
             Console.WriteLine();
         }
+        public async Task PrintAllDevicesAsync(CancellationToken cancellationToken)
+        {
+            var devices = await GetAllDevicesAsync(cancellationToken);
+            Console.WriteLine("+----+--------------+-----------+-----------+----------+----------+----------+-----------+");
+            Console.WriteLine("| Id | MeterNumber  | Group     | Site      | Latitude | Longitude| Altitude | TimeZone  |");
+            Console.WriteLine("+----+--------------+-----------+-----------+----------+----------+----------+-----------+");
+            foreach (var d in devices)
+            {
+                Console.WriteLine($"| {d.Id,2} | {d.MeterNumber,-12} | {d.GroupName,-9} | {d.SiteName,-9} | {d.Latitude,8} | {d.Longitude,8} | {d.Altitude,8} | {d.TimeZone,-9} |");
+            }
+            Console.WriteLine("+----+--------------+-----------+-----------+----------+----------+----------+-----------+");
+        }
 
         private async Task<IEnumerable<DapperReading>> GetAllReadingsAsync(CancellationToken cancellationToken)
         {
@@ -52,5 +65,28 @@ namespace Energycom.Analysis.Services
                 ))
                 .ToListAsync(cancellationToken);
         }
+        private async Task<IEnumerable<MeterInfo>> GetAllDevicesAsync(CancellationToken cancellationToken)
+        {
+            var meters = await _dbContext.Meters
+                .AsNoTracking()
+                .Include(m => m.Group)
+                .Include(m => m.Site)
+                .Include(m => m.Configuration)
+                .ToListAsync(cancellationToken);
+
+            return meters.Select(m => new MeterInfo
+            {
+                Id = m.Id,
+                MeterNumber = m.MeterNumber,
+                GroupName = m.Group?.Name,
+                SiteName = m.Site?.Name,
+                Latitude = m.Site?.Latitude,
+                Longitude = m.Site?.Longitude,
+                Altitude = m.Site?.Altitude,
+                TimeZone = m.Site?.TimeZone,
+                Configuration = m.Configuration
+            });
+        }
+
     }
 }
