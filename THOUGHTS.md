@@ -51,6 +51,39 @@
     - Time zone
     - Configuration details (Might be useless here since the valuse are consumed and relavant to injsetion project)
 
+    ### Device and Group Analytics: PrintDeviceStatsAsync, PrintDeviceQualityAsync, PrintDailyProductionAsync, PrintGroupStatsAsync
+
+    The `PrintDeviceStatsAsync`, `PrintDeviceQualityAsync`, `PrintDailyProductionAsync`, and `PrintGroupStatsAsync` methods provide advanced analytics and reporting for devices and groups. Each method retrieves aggregated statistics from the repository layer.
+
+    Each analytics method provides:
+
+    - **PrintDeviceStatsAsync:**  
+    Retrieves per-device statistics, including:
+        - Total produced and consumed energy
+        - Reading count
+        - Skipped readings (produced/consumed)
+        - First and last reading timestamps  
+    Results are sorted and visualized with a bar chart for the top producers.
+
+    - **PrintDeviceQualityAsync:**  
+    Reports data quality metrics for each device:
+        - Number of skipped (unparseable) readings
+        - Total readings ingested
+
+    - **PrintDailyProductionAsync:**  
+    Aggregates and displays daily production totals across all devices, including:
+        - Total produced energy per day
+        - Number of skipped readings per day  
+
+    - **PrintGroupStatsAsync:**  
+    Summarizes energy production and device counts at the group level, providing:
+        - Group name
+        - Total produced energy
+        - Device count
+
+    These analytics features help surface operational insights, data quality issues, and production trends, supporting both troubleshooting and strategic decision-making at the group and device level. The current structure also allows for easy extension; for example, additional methods could be implemented to analyze average consumption or production for devices within specific geographic areas (using latitude and longitude), or to evaluate peak production or consumption for devices or regions.
+
+
   ### Refactoring and Separation of Concerns
 
 - **Moving Logic Out of Program.cs:**  

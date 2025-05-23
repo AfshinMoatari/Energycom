@@ -19,6 +19,18 @@ public class ConsoleApp(
             Console.WriteLine("\n=== DEVICE INVENTORY (All Devices) ===");
             await analysisService.PrintAllDevicesAsync(cancellationToken);
 
+            Console.WriteLine("\n=== PER-DEVICE STATISTICS ===");
+            await analysisService.PrintDeviceStatsAsync(cancellationToken);
+
+            Console.WriteLine("\n=== GROUP PRODUCTION SUMMARY ===");
+            await analysisService.PrintGroupStatsAsync(cancellationToken);
+
+            Console.WriteLine("\n=== DEVICE DATA QUALITY ===");
+            await analysisService.PrintDeviceQualityAsync(cancellationToken);
+
+            Console.WriteLine("\n=== DAILY PRODUCTION SUMMARY ===");
+            await analysisService.PrintDailyProductionAsync(cancellationToken);
+
             logger.LogInformation("Work completed successfully");
         }
         catch (Exception ex)
