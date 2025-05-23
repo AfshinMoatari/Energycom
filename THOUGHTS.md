@@ -39,3 +39,8 @@
 
 - **Corrupted/Hexadecimal Data Handling:**  
   The corrupted data for the `Value` field appears to be intentional: the `TimedHostedService.DoWork()` method in the Ingestion project populates the database every 5 seconds, and if `CanHaveUnparsedReadings` and `applyEffect` are true, the decimal value is converted to a 32-character hexadecimal string. I also noticed that many values are missing quotes (invalid JSON for a string), which prevents JSON parsing to decimal. To address this, I implemented a Regex fix to add missing quotes around such values. If the value is a 32-character hex string, it is converted to a byte array, then to four `int`s, then to a `decimal`, and finally to a `double`. If the string is a number, it will attempt to parse it directly. These improvements significantly reduce the risk of skipped values due to parsing errors.
+
+  ### Refactoring and Separation of Concerns
+
+- **Moving Logic Out of Program.cs:**  
+  As part of making the application maintainable and extensible, I refactored the code to ensure that `Program.cs` is only responsible for application startup and dependency injection configuration. All business logic, data access, and application flow have been moved into dedicated service and hosted service classes (such as `EnergyAnalysisService` and `ConsoleApp`). This separation of concerns makes the codebase easier to test, reason about, and extend.
