@@ -4,12 +4,21 @@ using Energycom.Analysis.Helpers;
 
 namespace Energycom.Analysis.Services
 {
+    /// <summary>
+    /// Provides methods for printing energy and device analytics to the console.
+    /// </summary>
     public class EnergyAnalysisService : IEnergyAnalysisService
     {
         private readonly ECOMDbContext _dbContext;
         private readonly ILogger<EnergyAnalysisService> _logger;
         private readonly IReadingRepository _repository;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EnergyAnalysisService"/> class.
+        /// </summary>
+        /// <param name="dbContext">The EF Core database context.</param>
+        /// <param name="logger">The logger instance.</param>
+        /// <param name="repository">The reading repository for data access.</param>
         public EnergyAnalysisService(ECOMDbContext dbContext, ILogger<EnergyAnalysisService> logger, IReadingRepository repository)
         {
             _dbContext = dbContext;
@@ -17,6 +26,7 @@ namespace Energycom.Analysis.Services
             _repository = repository;
         }
 
+        /// <inheritdoc/>
         public async Task PrintAllReadingsAsync(CancellationToken cancellationToken)
         {
             var readings = await _repository.GetAllReadingsAsync(cancellationToken);
@@ -37,6 +47,8 @@ namespace Energycom.Analysis.Services
             Console.WriteLine("+-------------------+-------------------+-------------------+");
             Console.WriteLine();
         }
+
+        /// <inheritdoc/>
         public async Task PrintAllDevicesAsync(CancellationToken cancellationToken)
         {
             var devices = await _repository.GetAllDevicesAsync(cancellationToken);
@@ -50,6 +62,8 @@ namespace Energycom.Analysis.Services
             }
             Console.WriteLine("+----+--------------+-----------+-----------+----------+----------+----------+-----------+");
         }
+
+        /// <inheritdoc/>
         public async Task PrintDeviceStatsAsync(CancellationToken cancellationToken)
         {
             var stats = (await _repository.GetPerDeviceStatsAsync(cancellationToken)).OrderByDescending(s => s.TotalProduced).Take(10).ToList();
@@ -81,6 +95,8 @@ namespace Energycom.Analysis.Services
 
             ConsoleHelpers.PrintSideBySide(tableLines, chartLines);
         }
+
+        /// <inheritdoc/>
         public async Task PrintDeviceQualityAsync(CancellationToken cancellationToken)
         {
             var qualities = await _repository.GetDeviceQualityAsync(cancellationToken);
@@ -93,6 +109,8 @@ namespace Energycom.Analysis.Services
             }
             Console.WriteLine("+--------------+----------------+--------------+");
         }
+
+        /// <inheritdoc/>
         public async Task PrintDailyProductionAsync(CancellationToken cancellationToken)
         {
             var daily = (await _repository.GetDailyProductionAsync(cancellationToken)).ToList();
@@ -124,6 +142,8 @@ namespace Energycom.Analysis.Services
 
             ConsoleHelpers.PrintSideBySide(tableLines, chartLines);
         }
+
+        /// <inheritdoc/>
         public async Task PrintGroupStatsAsync(CancellationToken cancellationToken)
         {
             var groupStats = (await _repository.GetGroupStatsAsync(cancellationToken)).ToList();
@@ -155,6 +175,5 @@ namespace Energycom.Analysis.Services
 
             ConsoleHelpers.PrintSideBySide(tableLines, chartLines);
         }
-
     }
 }

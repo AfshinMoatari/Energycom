@@ -2,15 +2,23 @@
 using Energycom.Ingestion.Data;
 using Microsoft.EntityFrameworkCore;
 
+/// <summary>
+/// Implements data access methods for readings, devices, and analytics using EF Core.
+/// </summary>
 public class ReadingRepository : IReadingRepository
 {
     private readonly ECOMDbContext _dbContext;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ReadingRepository"/> class.
+    /// </summary>
+    /// <param name="dbContext">The EF Core database context.</param>
     public ReadingRepository(ECOMDbContext dbContext)
     {
         _dbContext = dbContext;
     }
 
+    /// <inheritdoc/>
     public async Task<IEnumerable<DapperReading>> GetAllReadingsAsync(CancellationToken cancellationToken)
     {
         return await _dbContext.Readings
@@ -27,6 +35,8 @@ public class ReadingRepository : IReadingRepository
             ))
             .ToListAsync(cancellationToken);
     }
+
+    /// <inheritdoc/>
     public async Task<IEnumerable<MeterInfo>> GetAllDevicesAsync(CancellationToken cancellationToken)
     {
         var meters = await _dbContext.Meters
@@ -49,6 +59,8 @@ public class ReadingRepository : IReadingRepository
             Configuration = m.Configuration
         });
     }
+
+    /// <inheritdoc/>
     public async Task<IEnumerable<DeviceStats>> GetPerDeviceStatsAsync(CancellationToken cancellationToken)
     {
         var readings = await GetAllReadingsAsync(cancellationToken);
@@ -73,6 +85,8 @@ public class ReadingRepository : IReadingRepository
             })
             .ToList();
     }
+
+    /// <inheritdoc/>
     public async Task<IEnumerable<GroupStats>> GetGroupStatsAsync(CancellationToken cancellationToken)
     {
         var readings = await GetAllReadingsAsync(cancellationToken);
@@ -92,6 +106,8 @@ public class ReadingRepository : IReadingRepository
             })
             .ToList();
     }
+
+    /// <inheritdoc/>
     public async Task<IEnumerable<DeviceQuality>> GetDeviceQualityAsync(CancellationToken cancellationToken)
     {
         var readings = await GetAllReadingsAsync(cancellationToken);
@@ -110,6 +126,8 @@ public class ReadingRepository : IReadingRepository
             })
             .ToList();
     }
+
+    /// <inheritdoc/>
     public async Task<IEnumerable<DailyProduction>> GetDailyProductionAsync(CancellationToken cancellationToken)
     {
         var readings = await GetAllReadingsAsync(cancellationToken);

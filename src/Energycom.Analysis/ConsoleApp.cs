@@ -13,12 +13,19 @@ public class ConsoleApp(
         {
             logger.LogInformation("Console app started");
 
+            //TASK#1
             Console.WriteLine("\n=== ENERGY SUMMARY ===");
             await analysisService.PrintAllReadingsAsync(cancellationToken);
 
+            Console.WriteLine(new string('-', 150));
+
+            //TASK#2
             Console.WriteLine("\n=== DEVICE INVENTORY (All Devices) ===");
             await analysisService.PrintAllDevicesAsync(cancellationToken);
 
+            Console.WriteLine(new string('-', 150));
+
+            //TASK#3
             Console.WriteLine("\n=== PER-DEVICE STATISTICS ===");
             await analysisService.PrintDeviceStatsAsync(cancellationToken);
 
