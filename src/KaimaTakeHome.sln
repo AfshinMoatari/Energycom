@@ -1,5 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36121.58 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Energycom.AppHost", "Energycom.AppHost\Energycom.AppHost.csproj", "{13D030E2-2BB7-420A-872C-DB8CDE0DAFAE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Energycom.Ingestion", "Energycom.Ingestion\Energycom.Ingestion.csproj", "{C96F15A1-FBBB-4531-BEC8-E3F2C0EA9E47}"
@@ -7,6 +10,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Energycom.Analysis", "Energycom.Analysis\Energycom.Analysis.csproj", "{301210BB-0A7E-44A0-8CEB-C389FA3535D2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Energycom.ServiceDefaults", "Energycom.ServiceDefaults\Energycom.ServiceDefaults.csproj", "{9F7EA7A8-0D4C-42E4-844B-56449F596E6B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Energycom.Analysis.Tests", "Energycom.Analysis.Tests\Energycom.Analysis.Tests.csproj", "{E29A1CE5-6DD5-46D9-9BAC-138549949A7D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -30,5 +35,15 @@ Global
 		{9F7EA7A8-0D4C-42E4-844B-56449F596E6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9F7EA7A8-0D4C-42E4-844B-56449F596E6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9F7EA7A8-0D4C-42E4-844B-56449F596E6B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E29A1CE5-6DD5-46D9-9BAC-138549949A7D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E29A1CE5-6DD5-46D9-9BAC-138549949A7D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E29A1CE5-6DD5-46D9-9BAC-138549949A7D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E29A1CE5-6DD5-46D9-9BAC-138549949A7D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7952298D-858A-4134-9E8B-E9019690C8DA}
 	EndGlobalSection
 EndGlobal

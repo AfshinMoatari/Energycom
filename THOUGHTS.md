@@ -44,3 +44,18 @@
 
 - **Moving Logic Out of Program.cs:**  
   As part of making the application maintainable and extensible, I refactored the code to ensure that `Program.cs` is only responsible for application startup and dependency injection configuration. All business logic, data access, and application flow have been moved into dedicated service and hosted service classes (such as `EnergyAnalysisService` and `ConsoleApp`). This separation of concerns makes the codebase easier to test, reason about, and extend.
+
+  ### Testing Strategy
+
+- **Purpose of the Test Project:**  
+  The test project is designed to ensure the correctness and robustness of the core logic in `ReadingParser` and `EnergyCalculator`. These components are critical for accurate data extraction and aggregation, so comprehensive unit tests are essential.
+
+- **ReadingParser Tests:**  
+  - Tests cover a variety of input formats, including standard numbers, numbers as strings, 32-character hexadecimal strings, missing or null values, and intentionally malformed JSON.
+  - Special attention is given to edge cases, such as missing quotes or corrupted data, to ensure the parser is resilient and minimizes skipped readings.
+  - The goal is to verify that all valid values are parsed correctly and that invalid or unparseable values are handled gracefully.
+
+- **EnergyCalculator Tests:**  
+  - Tests validate the calculation of produced, consumed, and net electricity from collections of readings.
+  - Scenarios include all-positive, all-negative, mixed, and empty input sets, as well as cases with skipped/invalid readings.
+  - The focus is on ensuring that aggregation logic matches business rules and that skipped readings are counted and reported accurately.
