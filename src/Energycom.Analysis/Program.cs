@@ -1,11 +1,13 @@
-﻿using System.Net.Http.Json;
-using Dapper;
+﻿using Dapper;
 using Energycom.Ingestion.Data;
 using Energycom.Ingestion.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using System.Net.Http.Json;
+using System.Text.Json;
+using System.Text.RegularExpressions;
 
 var builder = Host.CreateApplicationBuilder(args);
 builder.AddServiceDefaults();
@@ -97,27 +99,51 @@ public class ConsoleApp(
         Console.WriteLine();
     }
 
-    private static bool TryParseValue(string rawJson, out double value)
+    public static bool TryParseValue(string rawJson, out double value)
     {
         value = 0;
         try
         {
-            using var doc = System.Text.Json.JsonDocument.Parse(rawJson);
-            if (doc.RootElement.TryGetProperty("Value", out var valueElement))
+            var fixedJson = Regex.Replace(
+                rawJson,
+                @"(""Value""\s*:\s*)([A-Fa-f0-9]{32})(\s*,)",
+                "$1\"$2\"$3"
+            );
+
+            using var doc = JsonDocument.Parse(fixedJson);
+            var root = doc.RootElement;
+            if (root.TryGetProperty("Value", out var valueProp))
             {
-                if (valueElement.ValueKind == System.Text.Json.JsonValueKind.Number)
+                if (valueProp.ValueKind == JsonValueKind.Number)
                 {
-                    value = valueElement.GetDouble();
+                    value = valueProp.GetDouble();
                     return true;
                 }
-                else if (valueElement.ValueKind == System.Text.Json.JsonValueKind.String)
+                else if (valueProp.ValueKind == JsonValueKind.String)
                 {
-                    if (double.TryParse(valueElement.GetString(), out value))
+                    var hex = valueProp.GetString();
+                    if (!string.IsNullOrEmpty(hex) && Regex.IsMatch(hex, @"^[0-9A-Fa-f]{32}$"))
+                    {
+                        var bytes = Enumerable.Range(0, 16)
+                            .Select(i => Convert.ToByte(hex.Substring(i * 2, 2), 16))
+                            .ToArray();
+                        var bits = new int[4];
+                        for (int i = 0; i < 4; i++)
+                            bits[i] = BitConverter.ToInt32(bytes, i * 4);
+                        decimal dec = new decimal(bits);
+                        value = (double)dec;
                         return true;
+                    }
+                    if (double.TryParse(hex, out var dbl))
+                    {
+                        value = dbl;
+                        return true;
+                    }
                 }
             }
         }
-        catch { }
+        catch
+        { }
         return false;
     }
 
