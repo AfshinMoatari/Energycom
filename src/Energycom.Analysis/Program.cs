@@ -46,12 +46,13 @@ public class ConsoleApp(
         try
         {
             logger.LogInformation("Console app started");
-            
-            await SamplePeriodicCall(cancellationToken);
+
+            await PrintTotalProducedAsync(cancellationToken);
+            //await SamplePeriodicCall(cancellationToken);
             //await SampleStreamFunction(cancellationToken);
             //await SampleEFCoreQuery(cancellationToken);
             //await SampleDapperQuery(cancellationToken);
-            
+
             logger.LogInformation("Work completed successfully");
         }
         catch (Exception ex)
@@ -69,7 +70,57 @@ public class ConsoleApp(
        
     record DapperReading(Guid Id, string RawJson, DateTime Timestamp, int MeterId, string MeterNumber, string GroupName);
 
-    
+
+    public async Task PrintTotalProducedAsync(CancellationToken cancellationToken)
+    {
+        var readings = await ecomDbContext.Readings.ToListAsync(cancellationToken);
+
+        double totalProduced = 0;
+        int skipped = 0;
+
+        foreach (var reading in readings)
+        {
+            if (TryParseValue(reading.RawJson, out var value))
+            {
+                if (value > 0)
+                    totalProduced += value;
+            }
+            else
+            {
+                skipped++;
+            }
+        }
+
+        Console.WriteLine();
+        Console.WriteLine($"Total electricity produced: {totalProduced:N2} kWh");
+        Console.WriteLine($"Skipped readings: {skipped}");
+        Console.WriteLine();
+    }
+
+    private static bool TryParseValue(string rawJson, out double value)
+    {
+        value = 0;
+        try
+        {
+            using var doc = System.Text.Json.JsonDocument.Parse(rawJson);
+            if (doc.RootElement.TryGetProperty("Value", out var valueElement))
+            {
+                if (valueElement.ValueKind == System.Text.Json.JsonValueKind.Number)
+                {
+                    value = valueElement.GetDouble();
+                    return true;
+                }
+                else if (valueElement.ValueKind == System.Text.Json.JsonValueKind.String)
+                {
+                    if (double.TryParse(valueElement.GetString(), out value))
+                        return true;
+                }
+            }
+        }
+        catch { }
+        return false;
+    }
+
     /// <summary>
     /// This function uses Dapper to query the database and get readings with their associated meter and group and converts them to a flattened query object.
     /// </summary>
