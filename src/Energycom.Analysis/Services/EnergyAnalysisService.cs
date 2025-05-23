@@ -9,16 +9,18 @@ namespace Energycom.Analysis.Services
     {
         private readonly ECOMDbContext _dbContext;
         private readonly ILogger<EnergyAnalysisService> _logger;
+        private readonly IReadingRepository _repository;
 
-        public EnergyAnalysisService(ECOMDbContext dbContext, ILogger<EnergyAnalysisService> logger)
+        public EnergyAnalysisService(ECOMDbContext dbContext, ILogger<EnergyAnalysisService> logger, IReadingRepository repository)
         {
             _dbContext = dbContext;
             _logger = logger;
+            _repository = repository;
         }
 
         public async Task PrintAllReadingsAsync(CancellationToken cancellationToken)
         {
-            var readings = await GetAllReadingsAsync(cancellationToken);
+            var readings = await _repository.GetAllReadingsAsync(cancellationToken);
 
             int skippedNet, skippedProduced, skippedConsumed;
 
@@ -38,7 +40,8 @@ namespace Energycom.Analysis.Services
         }
         public async Task PrintAllDevicesAsync(CancellationToken cancellationToken)
         {
-            var devices = await GetAllDevicesAsync(cancellationToken);
+            var devices = await _repository.GetAllDevicesAsync(cancellationToken);
+
             Console.WriteLine("+----+--------------+-----------+-----------+----------+----------+----------+-----------+");
             Console.WriteLine("| Id | MeterNumber  | Group     | Site      | Latitude | Longitude| Altitude | TimeZone  |");
             Console.WriteLine("+----+--------------+-----------+-----------+----------+----------+----------+-----------+");
@@ -47,45 +50,6 @@ namespace Energycom.Analysis.Services
                 Console.WriteLine($"| {d.Id,2} | {d.MeterNumber,-12} | {d.GroupName,-9} | {d.SiteName,-9} | {d.Latitude,8} | {d.Longitude,8} | {d.Altitude,8} | {d.TimeZone,-9} |");
             }
             Console.WriteLine("+----+--------------+-----------+-----------+----------+----------+----------+-----------+");
-        }
-
-        private async Task<IEnumerable<DapperReading>> GetAllReadingsAsync(CancellationToken cancellationToken)
-        {
-            return await _dbContext.Readings
-                .AsNoTracking()
-                .Include(r => r.Meter)
-                    .ThenInclude(m => m.Group)
-                .Select(r => new DapperReading(
-                    r.Id,
-                    r.RawJson,
-                    r.IngestionDate,
-                    r.MeterId,
-                    r.Meter.MeterNumber,
-                    r.Meter.Group.Name
-                ))
-                .ToListAsync(cancellationToken);
-        }
-        private async Task<IEnumerable<MeterInfo>> GetAllDevicesAsync(CancellationToken cancellationToken)
-        {
-            var meters = await _dbContext.Meters
-                .AsNoTracking()
-                .Include(m => m.Group)
-                .Include(m => m.Site)
-                .Include(m => m.Configuration)
-                .ToListAsync(cancellationToken);
-
-            return meters.Select(m => new MeterInfo
-            {
-                Id = m.Id,
-                MeterNumber = m.MeterNumber,
-                GroupName = m.Group?.Name,
-                SiteName = m.Site?.Name,
-                Latitude = m.Site?.Latitude,
-                Longitude = m.Site?.Longitude,
-                Altitude = m.Site?.Altitude,
-                TimeZone = m.Site?.TimeZone,
-                Configuration = m.Configuration
-            });
         }
 
     }

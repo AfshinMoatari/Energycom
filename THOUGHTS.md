@@ -56,6 +56,8 @@
 - **Moving Logic Out of Program.cs:**  
   As part of making the application maintainable and extensible, I refactored the code to ensure that `Program.cs` is only responsible for application startup and dependency injection configuration. All business logic, data access, and application flow have been moved into dedicated service and hosted service classes (such as `EnergyAnalysisService` and `ConsoleApp`). This separation of concerns makes the codebase easier to test, reason about, and extend.
 
+    Additionally, I introduced a repository layer (ReadingRepository) to encapsulate all data access logic. By abstracting database operations behind repository interfaces, the service layer remains focused on business rules and orchestration, while data retrieval and persistence are handled separately. This approach improves maintainability, testability, and reusability across the application
+
   ### Testing Strategy
 
 - **Purpose of the Test Project:**  

@@ -24,7 +24,11 @@ builder.AddNpgsqlDbContext<ECOMDbContext>("EnergycomDb", settings => {
     options.UseSnakeCaseNamingConvention();
 });
 
+// Register Services
 builder.Services.AddScoped<IEnergyAnalysisService, EnergyAnalysisService>();
+// Register repositories
+builder.Services.AddScoped<IReadingRepository, ReadingRepository>();
+
 builder.Services.AddHostedService<ConsoleApp>();
 
 var host = builder.Build();
